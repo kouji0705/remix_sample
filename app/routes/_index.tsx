@@ -15,7 +15,13 @@ export const meta: MetaFunction = () => {
 	];
 };
 
-// action関数（フォーム送信時に実行）
+// データを取得（サーバーサイド）
+export async function loader() {
+	const todos = await getTodos();
+	return json({ todos });
+}
+
+// データを更新（サーバーサイド）
 export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
 	const intent = formData.get("intent");
@@ -30,31 +36,24 @@ export async function action({ request }: ActionFunctionArgs) {
 			break;
 		}
 		case "toggle": {
-			const toggleId = formData.get("id");
-			if (typeof toggleId === "string") {
-				await toggleTodo(Number.parseInt(toggleId));
+			const id = formData.get("id");
+			if (typeof id === "string") {
+				await toggleTodo(Number.parseInt(id));
 			}
 			break;
 		}
 		case "delete": {
-			const deleteId = formData.get("id");
-			if (typeof deleteId === "string") {
-				await deleteTodo(Number.parseInt(deleteId));
+			const id = formData.get("id");
+			if (typeof id === "string") {
+				await deleteTodo(Number.parseInt(id));
 			}
 			break;
 		}
 	}
-
 	return json({ ok: true });
 }
 
-// loader（サーバーサイド）
-export async function loader() {
-	const todos = await getTodos();
-	return json({ todos });
-}
-
-// コンポーネント（クライアントサイド）
+// UIコンポーネント（クライアントサイド）
 export default function Index() {
 	const { todos } = useLoaderData<typeof loader>();
 	const navigation = useNavigation();
@@ -64,12 +63,11 @@ export default function Index() {
 		<div className="max-w-2xl mx-auto p-4">
 			<h1 className="text-2xl font-bold mb-4">TODO App</h1>
 
-			{/* ローディング表示 */}
 			{isLoading ? (
 				<div className="text-center text-gray-500 my-4">Loading...</div>
 			) : (
 				<>
-					{/* TODO追加フォーム */}
+					{/* 新規TODO追加フォーム */}
 					<Form method="post" className="mb-4">
 						<div className="flex gap-2">
 							<input
@@ -96,31 +94,26 @@ export default function Index() {
 								key={todo.id}
 								className="flex items-center justify-between p-3 bg-white border rounded shadow-sm"
 							>
-								<div className="flex items-center gap-2">
-									<Form method="post">
-										<input type="hidden" name="id" value={todo.id} />
-										<button
-											type="submit"
-											name="intent"
-											value="toggle"
-											className="flex items-center gap-2"
-										>
-											<input
-												type="checkbox"
-												checked={todo.completed}
-												className="h-4 w-4"
-												readOnly
-											/>
-											<span
-												className={
-													todo.completed ? "line-through text-gray-500" : ""
-												}
-											>
-												{todo.title}
-											</span>
-										</button>
-									</Form>
-								</div>
+								{/* 完了状態の切り替えフォーム */}
+								<Form method="post" className="flex items-center gap-2">
+									<input type="hidden" name="id" value={todo.id} />
+									<input type="hidden" name="intent" value="toggle" />
+									<input
+										type="checkbox"
+										checked={todo.completed}
+										onChange={(e) => e.currentTarget.form?.submit()}
+										className="h-4 w-4"
+									/>
+									<span
+										className={
+											todo.completed ? "line-through text-gray-500" : ""
+										}
+									>
+										{todo.title}
+									</span>
+								</Form>
+
+								{/* 削除ボタン */}
 								<Form method="post">
 									<input type="hidden" name="id" value={todo.id} />
 									<button
