@@ -1,7 +1,7 @@
 import { json, type ActionFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useNavigation } from "@remix-run/react";
 import type { MetaFunction } from "@remix-run/node";
-import { addTodo, getTodos } from "~/services/todoService";
+import { addTodo, deleteTodo, getTodos, toggleTodo } from "~/services/todoService";
 import { TodoForm } from "~/components/todo/TodoForm";
 import { TodoList } from "~/components/todo/TodoList";
 import type { Todo as PrismaTodo } from "@prisma/client";
@@ -39,7 +39,23 @@ export async function action({ request }: ActionFunctionArgs) {
 				await addTodo(title);
 				break;
 			}
-			// ... 他のケース
+			case "toggle": {
+				const id = formData.get("id");
+				if (typeof id === "string") {
+					await toggleTodo(Number.parseInt(id));
+				}
+				break;
+			}
+			case "delete": {
+				const id = formData.get("id");
+				if (typeof id === "string") {
+					await deleteTodo(Number.parseInt(id));
+				}
+				break;
+			}
+			default: {
+				return json({ error: "Invalid intent" }, { status: 400 });
+			}
 		}
 		return json({ ok: true });
 	} catch (error) {
