@@ -1,40 +1,58 @@
-# Welcome to Remix!
+# Remix TODO App
 
-- 📖 [Remix docs](https://remix.run/docs)
+Remixを使用したシンプルなTODOアプリケーション。段階的な実装を通じてRemixの基本的な機能を学習できます。
 
-## Development
+## 開発環境
+- Node.js
+- Remix
+- TypeScript
+- TailwindCSS
+- SQLite + Prisma
 
-Run the dev server:
+## セットアップ
+```bash
+# プロジェクトのクローン
+git clone https://github.com/kouji0705/remix_sample.git
+cd remix_sample
 
-```shellscript
+# 依存関係のインストール
+npm install
+
+# データベースのセットアップ
+npx prisma migrate dev
+
+# 開発サーバーの起動
 npm run dev
 ```
 
-## Deployment
+## 実装ステップ
 
-First, build your app for production:
+### Step 1: 基本的なセットアップ
+- Remixプロジェクトの作成
+- TailwindCSSのセットアップ
+- シンプルなヘッダーの作成
+- 静的なTODOリストの表示
+- コンポーネントの基本構造
 
-```sh
-npm run build
-```
+### Step 2: APIとの連携
+- モックAPIの実装
+- Remixのloader関数でのデータ取得
+- ローディング状態の表示
+- コードの構造化（models, services, routes）
+- 型定義の整備
 
-Then run the app in production mode:
+### Step 3: コードの構造化とTODO操作機能
+- コンポーネントの分割
+  - TodoForm: 新規TODO追加フォーム
+  - TodoItem: 個別のTODOアイテム
+  - TodoList: TODOリストの表示
+- アクション処理の分離
+- TODOの追加・完了・削除機能の実装
+- 型安全性の確保
 
-```sh
-npm start
-```
-
-Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-- `build/server`
-- `build/client`
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
+### Step 4: データベース連携
+- SQLite + Prismaのセットアップ
+- データベーススキーマの定義
+- CRUD操作の実装
+- エラーハンドリング
+- データの永続化
