@@ -1,41 +1,24 @@
 import { json } from "@remix-run/node";
 import { useLoaderData, useNavigation } from "@remix-run/react";
 import type { MetaFunction } from "@remix-run/node";
-
-// 型定義
-type Todo = {
-	id: number;
-	title: string;
-	completed: boolean;
-};
-
-// loaderでモックAPIレスポンスを返す（サーバーサイドで実行）
-export async function loader() {
-	// APIレスポンスを模倣
-	await new Promise((resolve) => setTimeout(resolve, 500)); // 擬似的な遅延
-
-	// モックデータ（APIレスポンスの模倣）
-	const mockTodos: Todo[] = [
-		{ id: 1, title: "Remixを学ぶ", completed: false },
-		{ id: 2, title: "TODOアプリを作る", completed: true },
-		{ id: 3, title: "コードを理解する", completed: false },
-	];
-
-	return json({ todos: mockTodos });
-}
+import { getTodos } from "~/services/todoService";
 
 export const meta: MetaFunction = () => {
 	return [
-		{ title: "New Remix App" },
-		{ name: "description", content: "Welcome to Remix!" },
+		{ title: "TODO App" },
+		{ name: "description", content: "Simple TODO App with Remix" },
 	];
 };
 
-// コンポーネント（クライアントサイドで実行）
+// loader（サーバーサイド）
+export async function loader() {
+	const todos = await getTodos();
+	return json({ todos });
+}
+
+// コンポーネント（クライアントサイド）
 export default function Index() {
-	// loaderのデータを取得
 	const { todos } = useLoaderData<typeof loader>();
-	// ローディング状態の取得
 	const navigation = useNavigation();
 	const isLoading = navigation.state === "loading";
 
