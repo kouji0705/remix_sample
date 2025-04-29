@@ -1,4 +1,4 @@
-import type { Todo } from "~/models/todo";
+import type { Todo } from "~/routes/_index";
 import { TodoItem } from "./TodoItem";
 
 type Props = {

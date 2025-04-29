@@ -1,5 +1,5 @@
 import { Form } from "@remix-run/react";
-import type { Todo } from "~/models/todo";
+import type { Todo } from "~/routes/_index";
 
 type Props = {
 	todo: Todo;

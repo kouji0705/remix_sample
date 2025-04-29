@@ -1,14 +1,15 @@
 import { json, type ActionFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useNavigation } from "@remix-run/react";
 import type { MetaFunction } from "@remix-run/node";
-import { getTodos } from "~/services/todoService";
+import { addTodo, deleteTodo, getTodos, toggleTodo } from "~/services/todoService";
 import { TodoForm } from "~/components/todo/TodoForm";
 import { TodoList } from "~/components/todo/TodoList";
-import {
-	handleAddTodo,
-	handleToggleTodo,
-	handleDeleteTodo,
-} from "~/actions/todoActions";
+import type { Todo as PrismaTodo } from "@prisma/client";
+
+export type Todo = Omit<PrismaTodo, "createdAt" | "updatedAt"> & {
+	createdAt: string;
+	updatedAt: string;
+};
 
 export const meta: MetaFunction = () => {
 	return [
@@ -28,15 +29,38 @@ export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
 	const intent = formData.get("intent");
 
-	switch (intent) {
-		case "add":
-			return handleAddTodo(formData);
-		case "toggle":
-			return handleToggleTodo(formData);
-		case "delete":
-			return handleDeleteTodo(formData);
-		default:
-			return json({ error: "Invalid intent" }, { status: 400 });
+	try {
+		switch (intent) {
+			case "add": {
+				const title = formData.get("title");
+				if (typeof title !== "string" || !title) {
+					return json({ error: "Title is required" }, { status: 400 });
+				}
+				await addTodo(title);
+				break;
+			}
+			case "toggle": {
+				const id = formData.get("id");
+				if (typeof id === "string") {
+					await toggleTodo(Number.parseInt(id));
+				}
+				break;
+			}
+			case "delete": {
+				const id = formData.get("id");
+				if (typeof id === "string") {
+					await deleteTodo(Number.parseInt(id));
+				}
+				break;
+			}
+			default: {
+				return json({ error: "Invalid intent" }, { status: 400 });
+			}
+		}
+		return json({ ok: true });
+	} catch (error) {
+		console.error("Database error:", error);
+		return json({ error: "データベースエラーが発生しました" }, { status: 500 });
 	}
 }
 
