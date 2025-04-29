@@ -9,6 +9,48 @@ Remixを使用したシンプルなTODOアプリケーション。段階的な�
 - TailwindCSS
 - SQLite + Prisma
 
+
+# プロジェクト構成
+
+```text
+├── app/                    # アプリケーションのメインディレクトリ
+│   ├── actions/           # アクション関連の処理
+│   │   └── todoActions.ts # TODOのアクション（追加・削除・更新）を管理
+│   │
+│   ├── components/        # 再利用可能なコンポーネント
+│   │   └── todo/
+│   │       ├── TodoForm.tsx  # TODO追加用フォームコンポーネント
+│   │       ├── TodoItem.tsx  # 個別のTODOアイテムを表示するコンポーネント
+│   │       └── TodoList.tsx  # TODOリストを表示するコンポーネント
+│   │
+│   ├── lib/              # ユーティリティやライブラリの設定
+│   │   └── db.server.ts  # Prismaクライアントの設定（サーバーサイド専用）
+│   │
+│   ├── models/           # データモデルと型定義
+│   │   └── todo.ts       # TODOの型定義
+│   │
+│   ├── routes/           # ルーティング（Remixのファイルベースルーティング）
+│   │   └── _index.tsx    # トップページのルート
+│   │
+│   └── services/         # ビジネスロジックとデータアクセス
+│       └── todoService.ts # TODOのCRUD操作を実装
+│
+├── prisma/               # Prisma関連のファイル
+│   ├── schema.prisma     # データベーススキーマの定義
+│   ├── dev.db           # SQLiteデータベースファイル（.gitignoreに含める）
+│   └── migrations/      # データベースマイグレーションファイル
+│
+├── public/              # 静的ファイル
+│
+├── styles/              # スタイルシート
+│   └── tailwind.css     # TailwindCSSのエントリーポイント
+│
+├── package.json         # プロジェクトの依存関係と設定
+├── tailwind.config.js   # TailwindCSSの設定
+├── tsconfig.json        # TypeScriptの設定
+└── README.md           # プロジェクトの説明
+```
+
 ## セットアップ
 ```bash
 # プロジェクトのクローン
